@@ -1,0 +1,40 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {F4D557D8-061B-4128-967D-3022C15A477E} = s 'SqrlButtonImpl Class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{B65DCB19-EA5E-474E-89E1-8392256B14F3}'
+			Version = s '1.0'
+		}
+	}
+}
+HKLM
+{
+  NoRemove SOFTWARE
+  {
+    NoRemove Microsoft
+    {
+      NoRemove 'Internet Explorer'
+      {
+        NoRemove Extensions
+        {
+          ForceRemove {F4D557D8-061B-4128-967D-3022C15A477E} = s 'SqrlButtonImpl Class'
+          {
+            val 'Default Visible' = s 'yes'
+            val 'ButtonText' = s 'Sqrl'
+            val 'CLSID' = s '{1FBA04EE-3024-11d2-8F1F-0000F87ABD16}'
+            val 'ClsidExtension' = s '{F4D557D8-061B-4128-967D-3022C15A477E}'
+            val 'Icon' = s 'IDI_ICON'
+            val 'HotIcon' = s 'IDI_ICONHOT'
+          }
+        }
+      }
+    }
+  }
+}

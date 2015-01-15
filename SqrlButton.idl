@@ -1,0 +1,34 @@
+// SqrlButton.idl : IDL source for SqrlButton
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SqrlButton.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(07D13DF5-5F83-4ACB-803B-D8452E1099F0),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISqrlButtonImpl : IDispatch{
+};
+[
+	uuid(B65DCB19-EA5E-474E-89E1-8392256B14F3),
+	version(1.0),
+]
+library SqrlButtonLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(F4D557D8-061B-4128-967D-3022C15A477E)		
+	]
+	coclass SqrlButtonImpl
+	{
+		[default] interface ISqrlButtonImpl;
+	};
+};
+
