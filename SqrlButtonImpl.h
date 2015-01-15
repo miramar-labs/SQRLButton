@@ -9,14 +9,11 @@
 
 #include "SqrlButton_i.h"
 
-
-
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
 #error "Single-threaded COM objects are not properly supported on Windows CE platform, such as the Windows Mobile platforms that do not include full DCOM support. Define _CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA to force ATL to support creating single-thread COM object's and allow use of it's single-threaded COM object implementations. The threading model in your rgs file was set to 'Free' as that is the only threading model supported in non DCOM Windows CE platforms."
 #endif
 
 using namespace ATL;
-
 
 // CSqrlButtonImpl
 
@@ -68,12 +65,7 @@ public:
 	
 	// IOleCommandTarget
 	STDMETHOD(Exec)(const GUID *pguidCmdGroup, DWORD nCmdID,
-		DWORD nCmdExecOpt, VARIANTARG *pvaIn, VARIANTARG *pvaOut){
-
-		HRESULT hr = m_spWebBrowser->ExecWB(OLECMDID_PRINT, OLECMDEXECOPT_DODEFAULT, NULL, NULL);
-
-		return S_OK;
-	}
+		DWORD nCmdExecOpt, VARIANTARG *pvaIn, VARIANTARG *pvaOut);
 
 	STDMETHOD(QueryStatus)(const GUID *pguidCmdGroup, ULONG cCmds,
 		OLECMD *prgCmds, OLECMDTEXT *pCmdText){

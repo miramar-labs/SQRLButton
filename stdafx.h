@@ -23,3 +23,17 @@
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
+
+#include <string>
+using namespace std;
+
+/*
+//include novaPDF headers
+#include "..\novaSDK\include\nverrors.h"
+#include "..\novaSDK\include\novamessages.h"
+
+//Include novaPDF headers
+#include "..\novaSDK\include\novaOptions.h"
+
+//NovaPdfOptions
+#include "..\novaSDK\include\novapi.h"*/
