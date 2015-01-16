@@ -40,43 +40,42 @@ INovaPdfOptions80 *m_novaOptions = NULL;
 
 HRESULT InitNovaOptions(){
 
-	HRESULT hr = CoCreateInstance(__uuidof(NovaPdfOptions80), NULL, CLSCTX_INPROC_SERVER, __uuidof(INovaPdfOptions80), (LPVOID*)&m_novaOptions);
-	if (!SUCCEEDED(hr)){
-		//DoBalloonTip(_T("SqrlTray"), _T("Error getting novaPDF options - check installation"), 10);
-		return hr;
+	if (m_novaOptions){
+		m_novaOptions->Release();
+		m_novaOptions = NULL;
 	}
+
+	HRESULT hr = CoCreateInstance(__uuidof(NovaPdfOptions80), NULL, CLSCTX_INPROC_SERVER, __uuidof(INovaPdfOptions80), (LPVOID*)&m_novaOptions);
+	ATLASSERT(SUCCEEDED(hr));
 
 	// initialize the NovaPdfOptions object to use with a printer licensed for SDK
 	// if you have an application license for novaPDF SDK, 
 	// pass the license key to the Initialize() function
 	hr = m_novaOptions->Initialize(PRINTER_NAME, L"");	//TODO - license key...
-	if (!SUCCEEDED(hr)){
-		//DoBalloonTip(_T("SqrlTray"), _T("Error initializing novaPDF printer - check installation"), 10);
-		return hr;
-	}
+	ATLASSERT(SUCCEEDED(hr));
 
 	hr = m_novaOptions->RegisterEventWindow((LONG)g_hWndNova);
-	if (!SUCCEEDED(hr)){
-		//DoBalloonTip(_T("SqrlTray"), _T("Error registering for novaPDF events - check installation"), 10);
-		return hr;
-	}
+	ATLASSERT(SUCCEEDED(hr));
 
 	return S_OK;
 }
 
 void UnInitNovaOptions(){
+	
+	HRESULT hr;
+
 	if (m_novaOptions) {
 
 		//unregister events
-		m_novaOptions->UnRegisterEventWindow();
+		hr = m_novaOptions->UnRegisterEventWindow();
 
 		//restore default profile
 		if (m_wsDefaultProfile)
-			m_novaOptions->SetActiveProfile(m_wsDefaultProfile);
+			hr = m_novaOptions->SetActiveProfile(m_wsDefaultProfile);
 
 		//delete newly created profile
 		if (m_wsProfileSqrl)
-			m_novaOptions->DeleteProfile(m_wsProfileSqrl);
+			hr = m_novaOptions->DeleteProfile(m_wsProfileSqrl);
 
 		//free memory
 		if (m_wsProfileSqrl){
@@ -89,18 +88,24 @@ void UnInitNovaOptions(){
 		}
 
 		//restore default printer
-		m_novaOptions->RestoreDefaultPrinter();
+		hr = m_novaOptions->RestoreDefaultPrinter();
+
+		if (m_novaOptions){
+			m_novaOptions->Release();
+			m_novaOptions = NULL;
+		}
 	}
 }
 
 HRESULT SwitchToSqrlProfile(){
 
+	HRESULT hr;
+
 	//set novaPDF default printer 
 	ATLASSERT(m_novaOptions);
 
-	m_novaOptions->SetDefaultPrinter();
+	hr = m_novaOptions->SetDefaultPrinter();
 
-	HRESULT hr;
 	hr = m_novaOptions->GetActiveProfile(&m_wsDefaultProfile);	// may be NULL
 
 	//create a new profile with default settings
@@ -122,26 +127,26 @@ HRESULT SwitchToSqrlProfile(){
 	}
 
 	// disable the "Save PDF file as" prompt
-	m_novaOptions->SetOptionLong(NOVAPDF_SAVE_PROMPT_TYPE, PROMPT_SAVE_NONE);
+	hr = m_novaOptions->SetOptionLong(NOVAPDF_SAVE_PROMPT_TYPE, PROMPT_SAVE_NONE);
 
 	// set generated Pdf files destination folder 
-	m_novaOptions->SetOptionLong(NOVAPDF_SAVE_LOCATION, LOCATION_TYPE_LOCAL);
-	m_novaOptions->SetOptionLong(NOVAPDF_SAVE_FOLDER_TYPE, SAVEFOLDER_MYDOCUMENTS);
+	hr = m_novaOptions->SetOptionLong(NOVAPDF_SAVE_LOCATION, LOCATION_TYPE_LOCAL);
+	hr = m_novaOptions->SetOptionLong(NOVAPDF_SAVE_FOLDER_TYPE, SAVEFOLDER_MYDOCUMENTS);
 	//m_novaOptions->SetOptionString(NOVAPDF_SAVE_FOLDER, szExeDirectory);
 
 	// set output file name
-	m_novaOptions->SetOptionString(NOVAPDF_SAVE_FILE_NAME, L"Sqrl.pdf");
+	hr = m_novaOptions->SetOptionString(NOVAPDF_SAVE_FILE_NAME, L"Sqrl.pdf");
 
 	// if file exists in the destination folder, append a counter to the end of the file name
-	m_novaOptions->SetOptionLong(NOVAPDF_SAVE_FILEEXIST_ACTION, FILE_CONFLICT_STRATEGY_OVERWRITE);
+	hr = m_novaOptions->SetOptionLong(NOVAPDF_SAVE_FILEEXIST_ACTION, FILE_CONFLICT_STRATEGY_OVERWRITE);
 
-	m_novaOptions->SetOptionBool(NOVAPDF_ACTION_DEFAULT_VIEWER, FALSE);
+	hr = m_novaOptions->SetOptionBool(NOVAPDF_ACTION_DEFAULT_VIEWER, FALSE);
 
 	//save profile changes
-	m_novaOptions->SaveProfile();
+	hr = m_novaOptions->SaveProfile();
 
 	// switch active profile to Sqrl...
-	m_novaOptions->SetActiveProfile(m_wsProfileSqrl);
+	hr = m_novaOptions->SetActiveProfile(m_wsProfileSqrl);
 
 	return S_OK;
 }
@@ -161,8 +166,7 @@ BOOL CALLBACK NovaProc(HWND hDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 		// bring up browser here.....
 
 		//delete generated PDF ....
-		DeleteFileW(sFile.c_str());		//will fail if in use....
-
+		//DeleteFileW(sFile.c_str());		//will fail if in use....
 
 	}
 	else if (uiMsg == wm_Nova_StartDoc){
@@ -198,17 +202,10 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 {
 	switch(dwReason){
 		case DLL_PROCESS_ATTACH:
-
-			WCHAR drive[MAX_PATH], dir[MAX_PATH];
-			/*GetModuleFileNameW(NULL, szExeDirectory, MAX_PATH);
-			_wsplitpath(szExeDirectory, drive, dir, NULL, NULL);
-			wcscpy(szExeDirectory, drive);*/
 			
-			HRESULT result = SHGetFolderPathW(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, dir);
+			HRESULT result = SHGetFolderPathW(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, szExeDirectory);
 
-			wcscat(szExeDirectory, dir);
-
-			g_hWndNova = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG), NULL, NovaProc);	//hidden window for receiving messages
+			g_hWndNova = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG), NULL, NovaProc);	
 
 			break;
 	}
