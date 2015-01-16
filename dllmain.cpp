@@ -7,6 +7,8 @@
 #include "xdlldata.h"
 
 #include <shlobj.h>
+#include <comdef.h>
+#include <atlbase.h>
 
 //include novaPDF headers
 #include "..\novaSDK\include\nverrors.h"
@@ -37,6 +39,7 @@ LPWSTR  m_strProfileId = NULL;
 #define PROFILE_IS_PUBLIC   0	// private profile
 
 INovaPdfOptions80 *m_novaOptions = NULL;
+IWebBrowser2*	 m_spWebBrowser = NULL;
 
 HRESULT InitNovaOptions(){
 
@@ -164,6 +167,12 @@ BOOL CALLBACK NovaProc(HWND hDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 		//doRESTCall(sFile);
 
 		// bring up browser here.....
+		std::wstring sFileRemote(L"http://www.getsqrl.com");
+		std::wstring sFileLocal(L"file:////"); sFileLocal += sFile;
+
+		BSTR url = SysAllocString(sFileRemote.c_str());
+		m_spWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
+		SysFreeString(url);
 
 		//delete generated PDF ....
 		//DeleteFileW(sFile.c_str());		//will fail if in use....

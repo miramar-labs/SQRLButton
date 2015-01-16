@@ -42,26 +42,7 @@ END_COM_MAP()
 
 public:
 	// IObjectWithSite
-	STDMETHOD(SetSite)(IUnknown *pUnkSite){
-		if (pUnkSite != NULL)
-		{
-			// Cache the pointer to IWebBrowser2
-			CComQIPtr<IServiceProvider> sp = pUnkSite;
-			HRESULT hr = sp->QueryService(IID_IWebBrowserApp,
-				IID_IWebBrowser2, (void**)&m_spWebBrowser);
-			hr = sp->QueryInterface(IID_IOleCommandTarget,
-				(void**)&m_spTarget);
-		}
-		else
-		{
-			// Release pointer
-			m_spWebBrowser.Release();
-			m_spTarget.Release();
-		}
-
-		// Return base implementation
-		return IObjectWithSiteImpl<CSqrlButtonImpl>::SetSite(pUnkSite);
-	}
+	STDMETHOD(SetSite)(IUnknown *pUnkSite);
 	
 	// IOleCommandTarget
 	STDMETHOD(Exec)(const GUID *pguidCmdGroup, DWORD nCmdID,
@@ -77,7 +58,7 @@ public:
 	}
 
 private:
-	CComPtr<IWebBrowser2> m_spWebBrowser;
+	//CComPtr<IWebBrowser2> m_spWebBrowser;
 	CComQIPtr<IOleCommandTarget, &IID_IOleCommandTarget> m_spTarget;
 
 public:
