@@ -170,7 +170,7 @@ BOOL CALLBACK NovaProc(HWND hDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 		std::wstring sFileRemote(L"http://www.getsqrl.com");
 		std::wstring sFileLocal(L"file:////"); sFileLocal += sFile;
 
-		BSTR url = SysAllocString(sFileRemote.c_str());
+		BSTR url = SysAllocString(sFileLocal.c_str());
 		m_spWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
 		SysFreeString(url);
 

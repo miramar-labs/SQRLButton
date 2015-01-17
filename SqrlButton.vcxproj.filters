@@ -79,6 +79,7 @@
     <None Include="SqrlButtonImpl.rgs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SqrlButton.idl">
