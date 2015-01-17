@@ -5,7 +5,7 @@
 
 using namespace ATL;
 
-/*#include <cpprest/http_client.h>
+#include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <cpprest/uri.h>
 #include <thread>
@@ -13,7 +13,7 @@ using namespace ATL;
 using namespace concurrency::streams;
 using namespace web::http::client;
 
-using namespace web::http;*/
+using namespace web::http;
 
 //void doRESTCall(const std::wstring& file);
 
